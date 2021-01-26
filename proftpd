@@ -1,0 +1,38 @@
+	Настройка FTP (proftp)				
+					
+sudo apt-get install proftpd		установка proftpd			
+sudo nano /etc/proftpd/proftpd.conf		файл конфигурации			
+Укажем имя сервера:		ServerName "Debian"			
+Запретим пользователям ходить выше своего домашнего каталога (если указать конкретную директорию и разместить в ней директории других пользователей, то они смогут видеть файлы других пользователей):		DefaultRoot ~			
+Порт сервера		Port 21			
+Запретим подключаться к серверу пользователю root:		RootLogin off			
+Разрешаем продолжать закачку файлов:		AllowStoreRestart on			
+sudo proftpd -t		Проверка правильность написания файла конфига			
+sudo /etc/init.d/proftpd restart		Перезапускаем службу			
+sudo nano /etc/proftpd/proftpd.conf		редактируем файл конф.			
+"<IfModule mod_auth_file.c>
+AuthUserFile /etc/proftpd/ftpd.passwd
+AuthGroupFile /etc/proftpd/ftpd.group
+</IfModule>
+"		местоположения виртуальных данных			
+RequireValidShell off					
+					
+Создаем пользователя					
+ftpasswd --passwd --file=/etc/proftpd/ftpd.passwd --name=vasya --uid=33 --gid=33 --home=/var/tmp --shell=/usr/sbin/nologin			ftpasswd --passwd --file=/etc/proftpd/ftpd.passwd --name=vasya --uid=33 --gid=33 --home=/var/html/www --shell=/usr/sbin/nologin		
+home=/var/tmp		Дирректория пользователя для ftp доступа			
+/etc/proftpd/ftpd.passwd 		путь до файла, в котором хранятся пользователи и пароли			
+vasya		Имя учетной записи			
+shell=/usr/sbin/nologin		Запрет подключения к консоли			
+chmod 640 /etc/proftpd/ftpd.passwd					
+chown proftpd:root /etc/proftpd/ftpd.passwd					
+"sudo ftpasswd --group --name=nogroup --file=/etc/proftpd/ftpd.group --gid=60 --member test
+"					
+sudo proftpd -t					
+sudo /etc/init.d/proftpd restart					
+"sudo ftpasswd --passwd --file=/etc/proftpd/ftpd.passwd --name=test --change-password
+sudo ftpasswd --passwd --file=/etc/proftpd/ftpd.passwd --name=test --change-password
+sudo ftpasswd --passwd --file=/etc/proftpd/ftpd.passwd --name=test --change-password
+"				Смена пароля	
+sudo ftpasswd --passwd --file=/etc/proftpd/ftpd.passwd --name=test2 --lock					
+sudo ftpasswd --passwd --file=/etc/proftpd/ftpd.passwd --name=test --unlock					
+sudo ftpasswd --passwd --file=/etc/proftpd/ftpd.passwd --name=test --delete-user					
